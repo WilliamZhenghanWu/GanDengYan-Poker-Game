@@ -74,14 +74,14 @@ int main(){
 	cout<<"|                    干瞪眼游戏                       |"<<endl; 
 	cout<<"-------------------------------------------------------"<<endl; 	
 	cout<<"|                     更新日志                        |"<<endl; 
-	cout<<"| 1.可以正常出牌，且只能出单张和对子（可带百搭）      |"<<endl; 
+	cout<<"| 1.对代码进行了优化                                  |"<<endl; 
 	cout<<"| 2.修复了已知bug                                     |"<<endl; 
 	cout<<"-------------------------------------------------------"<<endl; 
 	cout<<"|                     游戏选项                        |"<<endl;	
     cout<<"| 1.开始游戏                                          |"<<endl; 
 	cout<<"| 2.请等待下一个版本                                  |"<<endl; 
 	cout<<"-------------------------------------------------------"<<endl; 	
-	cout<<"| InfDev1.4                                           |"<<endl;
+	cout<<"| InfDev1.5                                           |"<<endl;
 	cout<<"-------------------------------------------------------"<<endl; 
 	cout<<">>>";
 	cin>>choice;
@@ -118,7 +118,12 @@ int main(){
     cout<<"不出次数:"<<passtime<<endl;
     cout<<"出牌张数："<<Cards_Be_Chosen_Num<<endl;
 	//*/
-	 
+	
+    	cout<<endl;
+    	cout<<"AI1还剩"<<AI1Hand()<<"张牌"<<endl;    	
+		cout<<endl;
+    	cout<<"AI2还剩"<<AI2Hand()<<"张牌"<<endl;
+	    cout<<endl; 
  		cout<<"你选择出第几张？>>>";
  		for(int i=0;i<=5;i++)Cards_Be_Chosen[i]="";
 		Cards_Be_Chosen_Num=0;
@@ -213,8 +218,11 @@ int main(){
 		    Sleep(1000);
 			system("cls");
 		}
-		if(AI1Card[0]==""&&AI1Card[1]==""&&AI1Card[2]==""&&AI1Card[3]==""&&AI1Card[4]==""&&AI1Card[5]==""){//玩家胜利 
+		if(AI1Hand()==0){//玩家胜利 
 	    	system("cls");
+	    	cout<<"机器人1出牌：";
+		    for(int j=0;j<=5;j++)cout<<AI1_push[j];
+		    cout<<endl;
 			cout<<"机器人1赢了！！！下次祝你好运！"<<endl;
 			Sleep(3000);
 			break; 
@@ -236,8 +244,11 @@ int main(){
 		cout<<"机器人2出牌：";
 		for(int j=0;j<=5;j++)cout<<AI2_push[j];
 		cout<<endl;
-		if(AI2Card[0]==""&&AI2Card[1]==""&&AI2Card[2]==""&&AI2Card[3]==""&&AI2Card[4]==""&&AI2Card[5]==""){//玩家胜利 
-	    	system("cls");
+		if(AI2Hand()==0){//玩家胜利 
+	    	system("cls");		
+			cout<<"机器人2出牌：";
+		    for(int j=0;j<=5;j++)cout<<AI2_push[j];
+		    cout<<endl;
 			cout<<"机器人2赢了！！！下次祝你好运！"<<endl;
 			Sleep(3000);
 			break; 

@@ -55,7 +55,8 @@ bool SingleCardIsValid(const string &OthersCard, const string &OnesCard,int &pas
         rank["7"] = 5; rank["8"] = 6; rank["9"] = 7; rank["10"] = 8; 
         rank["J"] = 9; rank["Q"] = 10; rank["K"] = 11; rank["A"] = 12; 
         rank["2"] = 13; rank["小王"] = -1; rank["大王"] = -1; rank["广告"] = -1;
-        if(rank[OnesCard]-rank[OthersCard]==1)	return 1;
+        if(OnesCard=="") return 0;
+        else if(rank[OnesCard]-rank[OthersCard]==1)	return 1;
 		else if(rank[OnesCard]==-1) return 0; 
         else if(OnesCard=="2"&&OthersCard!="2") return 1;
         else if(passtime>=2) return 1;
@@ -71,193 +72,112 @@ bool DoubleCardsIsValid(const string &OthersCard1,const string &OthersCard2,cons
         rank["7"] = 5; rank["8"] = 6; rank["9"] = 7; rank["10"] = 8; 
         rank["J"] = 9; rank["Q"] = 10; rank["K"] = 11; rank["A"] = 12; 
         rank["2"] = 13; rank["小王"] = -1; rank["大王"] = -1; rank["广告"] = -1;
-        if(OnesCard1!=OnesCard2&&rank[OnesCard1]!=-1&&rank[OnesCard2]!=-1) return 0;
+        if((OnesCard1!=OnesCard2&&rank[OnesCard1]!=-1&&rank[OnesCard2]!=-1)||(OnesCard1==""||OnesCard2=="")) return 0;
         else if(rank[OnesCard1]==-1&&rank[OnesCard2]==-1) return 0;
         else{
         	if(passtime>=2) return 1;
         	else if(OthersCard2!=OthersCard1&&rank[OthersCard1]!=-1&&rank[OthersCard2]!=-1) return 0;
-        	else if(((OnesCard1=="2"&&OnesCard2=="2")||(rank[OnesCard1]==-1&&OnesCard2=="2")||(rank[OnesCard2]==-1&&OnesCard1=="2"))&&OthersCard1!="2") return 1;
+        	else if(((OnesCard1=="2"&&OnesCard2=="2")||(rank[OnesCard1]==-1&&OnesCard2=="2")||(rank[OnesCard2]==-1&&OnesCard1=="2"))&&OthersCard1!="2"&&OthersCard2!="2") return 1;
 			else if((rank[OnesCard1]-1==rank[OthersCard1]&&rank[OnesCard2]-1==rank[OthersCard2])||(rank[OnesCard1]-1==rank[OthersCard1]&&rank[OnesCard2]==-1)||(rank[OnesCard1]==-1&&rank[OnesCard2]-1==rank[OthersCard2])||(rank[OnesCard1]-1==rank[OthersCard2]&&rank[OnesCard2]==-1)||(rank[OnesCard2]-1==rank[OthersCard1]&&rank[OnesCard1]==-1)) return 1;
 			else return 0;
 		}
 };
 /* AI出牌 */
 
-void AI1_Push_Cards(){//AI1逻辑（写的有点不耐烦了） 
-    if(passtime==2){
- 			New_Card_Void(AI1Card);
- 			Cards_Be_Chosen_Num=(rand()%2)+1;
-		for(int i=0;i<=5;i++)
+void AI1_Push_Cards(){//AI1逻辑（写的有点不耐烦了） //已重构，暴力求解 
+    if(passtime==2) New_Card_Void(AI1Card); 
+    for(int i=0;i<=5;i++) AI1_push[i]=""; 
+    
+    if(Cards_Be_Chosen_Num==2||passtime==2){
+	    for(int i=0;i<=5;i++){
 		for(int j=0;j<=5;j++){
-		if(i==j)continue;
-		else if(AI1Card[i]=="")continue;
-		else if(AI1Card[i]==AI1Card[j]){
-			passtime=0;
-		    AI1_push[0]=AI1Card[i];
-			AI1_push[1]=AI1Card[j];
-		    AI1Card[i]="";AI1Card[j]="";
-		    Last_Cards[0]=AI1_push[0];Last_Cards[1]=AI1_push[1];
-		    range_cards();
-		    return;
-	    }	
+			if(i==j)continue;
+			else if(DoubleCardsIsValid(Last_Cards[0],Last_Cards[1],AI1Card[i],AI1Card[j],passtime)){
+				Cards_Be_Chosen_Num=2;
+				passtime=0;
+		        AI1_push[0]=AI1Card[i];
+			    AI1_push[1]=AI1Card[j];
+		        AI1Card[i]="";AI1Card[j]="";
+		        Last_Cards[0]=AI1_push[0];Last_Cards[1]=AI1_push[1];
+		        range_cards();
+		        return;
+			}
 		}
-		goto AI1;
+	    }
 	}
-	AI1:
-	AI1_push[0]="";AI1_push[1]="";AI1_push[2]="";AI1_push[3]="";AI1_push[4]="";AI1_push[5]="";
-	if(Cards_Be_Chosen_Num==1){
-		map<string, int> rank;
-        rank["3"] = 1; rank["4"] = 2; rank["5"] = 3; rank["6"] = 4; 
-        rank["7"] = 5; rank["8"] = 6; rank["9"] = 7; rank["10"] = 8; 
-        rank["J"] = 9; rank["Q"] = 10; rank["K"] = 11; rank["A"] = 12; 
-        rank["2"] = 13; rank["小王"] = -1; rank["大王"] = -1; rank["广告"] = -1;rank[""] = -100;
-		if(passtime==2){
-			for(int i=0;i<=5;i++)
-			if(AI1Card[i]!=""&&AI1Card[i]!="小王"&&AI1Card[i]!="大王"&&AI1Card[i]!="广告"){
-			passtime=0;
+	
+	if(Cards_Be_Chosen_Num==1||passtime==2){
+    for(int i=0;i<=5;i++){
+    	if(SingleCardIsValid(Last_Cards[0],AI1Card[i],passtime)){
+    		Cards_Be_Chosen_Num=1;
+    		passtime=0;
 		    AI1_push[0]=AI1Card[i];
 		    AI1Card[i]="";
-	    	Last_Cards[0]=AI1_push[0];
+		    Last_Cards[0]=AI1_push[0];
 		    range_cards();
 		    return;
-	        }
-		}
-		else{
-	for(int i=0;i<6;i++){ 
-		if(rank[AI1Card[i]]-rank[Last_Cards[0]]==1||(AI1Card[i]=="2"&&Last_Cards[0]!="2")){
-		passtime=0;
-		AI1_push[0]=AI1Card[i];
-		AI1Card[i]="";
-		Last_Cards[0]=AI1_push[0];
-		range_cards();
-		return;
 		}
 	}
+    }
+    
 	AI1_push[0]="不出";
 	passtime++;
-	return;
-}
-	}
-    else if(Cards_Be_Chosen_Num==2){ 
-    	map<string, int> rank;
-        rank["3"] = 1; rank["4"] = 2; rank["5"] = 3; rank["6"] = 4; 
-        rank["7"] = 5; rank["8"] = 6; rank["9"] = 7; rank["10"] = 8; 
-        rank["J"] = 9; rank["Q"] = 10; rank["K"] = 11; rank["A"] = 12; 
-        rank["2"] = 13; rank["小王"] = -1; rank["大王"] = -1; rank["广告"] = -1;rank[""] = -100;
-		if(passtime!=2){
-		for(int i=0;i<6;i++){ 
-		if((rank[AI1Card[i]]-rank[Last_Cards[0]]==1||rank[AI1Card[i]]-rank[Last_Cards[1]]==1)||AI1Card[i]=="2"&&Last_Cards[0]!="2"){
-		for(int j=0;j<=5;j++){
-			if(i==j)continue;
-			else if(AI1Card[i]==AI1Card[j]||rank[AI1Card[j]]==-1){
-			passtime=0;
-		    AI1_push[0]=AI1Card[i];
-			AI1_push[1]=AI1Card[j];
-		    AI1Card[i]="";AI1Card[j]="";
-		    Last_Cards[0]=AI1_push[0];Last_Cards[1]=AI1_push[1];
-		    range_cards();
-			
-		return;
-	}
-		}
-
-		}
-	}
-		}
-	AI1_push[0]="不出";
-	passtime++;
-	}
 };
 
-void AI2_Push_Cards(){//AI1逻辑（写的有点不耐烦了） 
-		map<string, int> rank;
-        rank["3"] = 1; rank["4"] = 2; rank["5"] = 3; rank["6"] = 4; 
-        rank["7"] = 5; rank["8"] = 6; rank["9"] = 7; rank["10"] = 8; 
-        rank["J"] = 9; rank["Q"] = 10; rank["K"] = 11; rank["A"] = 12; 
-        rank["2"] = 13; rank["小王"] = -1; rank["大王"] = -1; rank["广告"] = -1;rank[""] = -100;
-    if(passtime==2){
- 			New_Card_Void(AI2Card);
- 			Cards_Be_Chosen_Num=(rand()%2)+1;
-		for(int i=0;i<=5;i++)
-		for(int j=0;j<=5;j++){
-		if(i==j)continue;
-		else if(AI2Card[i]=="")continue;
-		else if(AI2Card[i]==AI2Card[j]||rank[AI2Card[j]]==-1){
-			passtime=0;
-		    AI2_push[0]=AI2Card[i];
-			AI2_push[1]=AI2Card[j];
-		    AI2Card[i]="";AI2Card[j]="";
-		    Last_Cards[0]=AI2_push[0];Last_Cards[1]=AI2_push[1];
-		    range_cards();
-		    return;
-	    }	
-		}
-        goto AI2;
-		
-	}
-	AI2:
-	AI2_push[0]="";AI2_push[1]="";AI2_push[2]="";AI2_push[3]="";AI2_push[4]="";AI2_push[5]="";
-	if(Cards_Be_Chosen_Num==1){
-		map<string, int> rank;
-        rank["3"] = 1; rank["4"] = 2; rank["5"] = 3; rank["6"] = 4; 
-        rank["7"] = 5; rank["8"] = 6; rank["9"] = 7; rank["10"] = 8; 
-        rank["J"] = 9; rank["Q"] = 10; rank["K"] = 11; rank["A"] = 12; 
-        rank["2"] = 13; rank["小王"] = -1; rank["大王"] = -1; rank["广告"] = -1;rank[""] = -100;
-		if(passtime==2){
-			for(int i=0;i<=5;i++)
-			if(AI2Card[i]!=""&&AI2Card[i]!="小王"&&AI2Card[i]!="大王"&&AI2Card[i]!="广告"){
-			passtime=0;
-		    AI2_push[0]=AI2Card[i];
-		    AI2Card[i]="";
-	    	Last_Cards[0]=AI2_push[0];
-		    range_cards();
-		    return;
-	        }
-		}
-		else{
-	for(int i=0;i<6;i++){ 
-		if(rank[AI2Card[i]]-rank[Last_Cards[0]]==1||(AI2Card[i]=="2"&&Last_Cards[0]!="2")){
-		passtime=0;
-		AI2_push[0]=AI2Card[i];
-		AI2Card[i]="";
-		Last_Cards[0]=AI2_push[0];
-		range_cards();
-		return;
-		}
-	}
-	AI2_push[0]="不出";
-	passtime++;
-	return;
-}
-	}
-    else if(Cards_Be_Chosen_Num==2){
-    	map<string, int> rank;
-        rank["3"] = 1; rank["4"] = 2; rank["5"] = 3; rank["6"] = 4; 
-        rank["7"] = 5; rank["8"] = 6; rank["9"] = 7; rank["10"] = 8; 
-        rank["J"] = 9; rank["Q"] = 10; rank["K"] = 11; rank["A"] = 12; 
-        rank["2"] = 13; rank["小王"] = -1; rank["大王"] = -1; rank["广告"] = -1;rank[""] = -100;
-		if(passtime!=2){
-		for(int i=0;i<6;i++){ 
-		if(rank[AI2Card[i]]-rank[Last_Cards[0]]==1||rank[AI2Card[i]]-rank[Last_Cards[1]]==1||AI2Card[i]=="2"&&Last_Cards[0]!="2"){
+void AI2_Push_Cards(){//AI2逻辑（写的有点不耐烦了） //已重构，暴力求解 
+    if(passtime==2) New_Card_Void(AI2Card); 
+    for(int i=0;i<=5;i++) AI2_push[i]=""; 
+    
+    if(Cards_Be_Chosen_Num==2||passtime==2){
+	    for(int i=0;i<=5;i++){
 		for(int j=0;j<=5;j++){
 			if(i==j)continue;
-			else if(AI2Card[i]==AI2Card[j]||rank[AI2Card[j]]==-1){
-			passtime=0;
+			else if(DoubleCardsIsValid(Last_Cards[0],Last_Cards[1],AI2Card[i],AI2Card[j],passtime)){
+				Cards_Be_Chosen_Num=2;
+				passtime=0;
+		        AI2_push[0]=AI2Card[i];
+			    AI2_push[1]=AI2Card[j];
+		        AI2Card[i]="";AI2Card[j]="";
+		        Last_Cards[0]=AI2_push[0];Last_Cards[1]=AI2_push[1];
+		        range_cards();
+		        return;
+			}
+		}
+	    }
+	}
+	
+	if(Cards_Be_Chosen_Num==1||passtime==2){
+    for(int i=0;i<=5;i++){
+    	if(SingleCardIsValid(Last_Cards[0],AI2Card[i],passtime)){
+    		Cards_Be_Chosen_Num=1;
+    		passtime=0;
 		    AI2_push[0]=AI2Card[i];
-			AI2_push[1]=AI2Card[j];
-		    AI2Card[i]="";AI2Card[j]="";
-		    Last_Cards[0]=AI2_push[0];Last_Cards[1]=AI2_push[1];
+		    AI2Card[i]="";
+		    Last_Cards[0]=AI2_push[0];
 		    range_cards();
-		return;
-	}
-		}
-
+		    return;
 		}
 	}
-		}
+    }
+    
 	AI2_push[0]="不出";
 	passtime++;
+};
+
+int AI1Hand(){//AI1还剩的牌 
+	int cnt=0;//计数器 
+    for(int i=0;i<=5;i++){
+    	if(AI1Card[i]!="")cnt++;
 	}
+	return cnt; 
+};
+
+int AI2Hand(){//AI2还剩的牌 
+	int cnt=0;//计数器 
+    for(int i=0;i<=5;i++){
+    	if(AI2Card[i]!="")cnt++;
+	}
+	return cnt; 
 };
 
 /* 更新手牌 */
