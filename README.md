@@ -43,7 +43,3 @@ Card size: 2>A>K>Q>J>10>9>8>7>6>5>4>3
 The first to finish wins
 7. Points
 The amount of win and loss is determined by the number of cards left, and the loser has a trump card in the double settlement (for example, when the loser has 5 cards in his hand and loses and 1 of the 5 cards is an ace, it will be counted as 10 cards)
-
-此版本仅完成了单牌逻辑，其他牌型正在todo列表中。
-
-This Version has only finished single card logic and the others are in todo-list.
