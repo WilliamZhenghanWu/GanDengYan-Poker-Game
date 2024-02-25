@@ -74,14 +74,14 @@ int main(){
 	cout<<"|                    干瞪眼游戏                       |"<<endl; 
 	cout<<"-------------------------------------------------------"<<endl; 	
 	cout<<"|                     更新日志                        |"<<endl; 
-	cout<<"| 1.现在在游戏中可以正常出牌，且只能出单张和对子      |"<<endl; 
+	cout<<"| 1.可以正常出牌，且只能出单张和对子（可带百搭）      |"<<endl; 
 	cout<<"| 2.修复了已知bug                                     |"<<endl; 
 	cout<<"-------------------------------------------------------"<<endl; 
 	cout<<"|                     游戏选项                        |"<<endl;	
     cout<<"| 1.开始游戏                                          |"<<endl; 
 	cout<<"| 2.请等待下一个版本                                  |"<<endl; 
 	cout<<"-------------------------------------------------------"<<endl; 	
-	cout<<"| InfDev1.3                                           |"<<endl;
+	cout<<"| InfDev1.4                                           |"<<endl;
 	cout<<"-------------------------------------------------------"<<endl; 
 	cout<<">>>";
 	cin>>choice;
@@ -182,6 +182,13 @@ int main(){
 			goto CardFlag;
 	    }
 		}
+		/* TODO
+		else if(Cards_Be_CHosen_Num>=3){
+			if(Bomb_Or_not(Last_Cards[0],Last_cards[1],Last_cards[2],Cards_Be_Chosen[0],Cards_Be_Chosen[1],Cards_Be_Chosen[2])){
+				
+			}
+			else if(Straight_Or_not())
+		} */
 		else{//现在只考虑单张
 		    cout<<"出牌不合法！"<<endl;
 		    Card_Is_Valid=0;
@@ -200,6 +207,7 @@ int main(){
 		}
 		system("cls");
 	    for(int i=3;i>0;i--){
+	    	cout<<"不出次数:"<<passtime<<endl;//测试不出次数 
 	    	cout<<"你选择出："<<Cards_Be_Chosen[0]<<" "<<Cards_Be_Chosen[1]<<" "<<Cards_Be_Chosen[2]<<" "<<Cards_Be_Chosen[3]<<" "<<Cards_Be_Chosen[4]<<" "<<Cards_Be_Chosen[5]<<endl;
 		    cout<<"正在等待机器人1出牌……"<<i<<"秒"<<endl;
 		    Sleep(1000);
@@ -212,6 +220,7 @@ int main(){
 			break; 
 		}
 		for(int i=3;i>0;i--){
+			cout<<"不出次数:"<<passtime<<endl;//测试不出次数 
 	    	cout<<"你选择出："<<Cards_Be_Chosen[0]<<" "<<Cards_Be_Chosen[1]<<" "<<Cards_Be_Chosen[2]<<" "<<Cards_Be_Chosen[3]<<" "<<Cards_Be_Chosen[4]<<" "<<Cards_Be_Chosen[5]<<endl;
 		    cout<<"机器人1出牌：";
 		    for(int j=0;j<=5;j++)cout<<AI1_push[j];

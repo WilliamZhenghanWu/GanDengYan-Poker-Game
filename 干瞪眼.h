@@ -71,12 +71,13 @@ bool DoubleCardsIsValid(const string &OthersCard1,const string &OthersCard2,cons
         rank["7"] = 5; rank["8"] = 6; rank["9"] = 7; rank["10"] = 8; 
         rank["J"] = 9; rank["Q"] = 10; rank["K"] = 11; rank["A"] = 12; 
         rank["2"] = 13; rank["小王"] = -1; rank["大王"] = -1; rank["广告"] = -1;
-        if(OnesCard1!=OnesCard2) return 0;
+        if(OnesCard1!=OnesCard2&&rank[OnesCard1]!=-1&&rank[OnesCard2]!=-1) return 0;
+        else if(rank[OnesCard1]==-1&&rank[OnesCard2]==-1) return 0;
         else{
         	if(passtime>=2) return 1;
-        	else if(OthersCard2=="") return 0;
-        	else if(OnesCard1=="2"&&OthersCard1!="2") return 1;
-			else if(rank[OnesCard1]-1==rank[OthersCard1]) return 1;
+        	else if(OthersCard2!=OthersCard1&&rank[OthersCard1]!=-1&&rank[OthersCard2]!=-1) return 0;
+        	else if(((OnesCard1=="2"&&OnesCard2=="2")||(rank[OnesCard1]==-1&&OnesCard2=="2")||(rank[OnesCard2]==-1&&OnesCard1=="2"))&&OthersCard1!="2") return 1;
+			else if((rank[OnesCard1]-1==rank[OthersCard1]&&rank[OnesCard2]-1==rank[OthersCard2])||(rank[OnesCard1]-1==rank[OthersCard1]&&rank[OnesCard2]==-1)||(rank[OnesCard1]==-1&&rank[OnesCard2]-1==rank[OthersCard2])||(rank[OnesCard1]-1==rank[OthersCard2]&&rank[OnesCard2]==-1)||(rank[OnesCard2]-1==rank[OthersCard1]&&rank[OnesCard1]==-1)) return 1;
 			else return 0;
 		}
 };
@@ -145,10 +146,10 @@ void AI1_Push_Cards(){//AI1逻辑（写的有点不耐烦了）
         rank["2"] = 13; rank["小王"] = -1; rank["大王"] = -1; rank["广告"] = -1;rank[""] = -100;
 		if(passtime!=2){
 		for(int i=0;i<6;i++){ 
-		if(rank[AI1Card[i]]-rank[Last_Cards[0]]==1||AI1Card[i]=="2"&&Last_Cards[0]!="2"){
+		if((rank[AI1Card[i]]-rank[Last_Cards[0]]==1||rank[AI1Card[i]]-rank[Last_Cards[1]]==1)||AI1Card[i]=="2"&&Last_Cards[0]!="2"){
 		for(int j=0;j<=5;j++){
 			if(i==j)continue;
-			else if(AI1Card[i]==AI1Card[j]){
+			else if(AI1Card[i]==AI1Card[j]||rank[AI1Card[j]]==-1){
 			passtime=0;
 		    AI1_push[0]=AI1Card[i];
 			AI1_push[1]=AI1Card[j];
@@ -169,14 +170,19 @@ void AI1_Push_Cards(){//AI1逻辑（写的有点不耐烦了）
 };
 
 void AI2_Push_Cards(){//AI1逻辑（写的有点不耐烦了） 
+		map<string, int> rank;
+        rank["3"] = 1; rank["4"] = 2; rank["5"] = 3; rank["6"] = 4; 
+        rank["7"] = 5; rank["8"] = 6; rank["9"] = 7; rank["10"] = 8; 
+        rank["J"] = 9; rank["Q"] = 10; rank["K"] = 11; rank["A"] = 12; 
+        rank["2"] = 13; rank["小王"] = -1; rank["大王"] = -1; rank["广告"] = -1;rank[""] = -100;
     if(passtime==2){
  			New_Card_Void(AI2Card);
  			Cards_Be_Chosen_Num=(rand()%2)+1;
 		for(int i=0;i<=5;i++)
 		for(int j=0;j<=5;j++){
 		if(i==j)continue;
-		else if(AI1Card[i]=="")continue;
-		else if(AI2Card[i]==AI2Card[j]){
+		else if(AI2Card[i]=="")continue;
+		else if(AI2Card[i]==AI2Card[j]||rank[AI2Card[j]]==-1){
 			passtime=0;
 		    AI2_push[0]=AI2Card[i];
 			AI2_push[1]=AI2Card[j];
@@ -186,9 +192,10 @@ void AI2_Push_Cards(){//AI1逻辑（写的有点不耐烦了）
 		    return;
 	    }	
 		}
-
+        goto AI2;
 		
 	}
+	AI2:
 	AI2_push[0]="";AI2_push[1]="";AI2_push[2]="";AI2_push[3]="";AI2_push[4]="";AI2_push[5]="";
 	if(Cards_Be_Chosen_Num==1){
 		map<string, int> rank;
@@ -231,10 +238,10 @@ void AI2_Push_Cards(){//AI1逻辑（写的有点不耐烦了）
         rank["2"] = 13; rank["小王"] = -1; rank["大王"] = -1; rank["广告"] = -1;rank[""] = -100;
 		if(passtime!=2){
 		for(int i=0;i<6;i++){ 
-		if(rank[AI2Card[i]]-rank[Last_Cards[0]]==1||AI2Card[i]=="2"&&Last_Cards[0]!="2"){
+		if(rank[AI2Card[i]]-rank[Last_Cards[0]]==1||rank[AI2Card[i]]-rank[Last_Cards[1]]==1||AI2Card[i]=="2"&&Last_Cards[0]!="2"){
 		for(int j=0;j<=5;j++){
 			if(i==j)continue;
-			else if(AI2Card[i]==AI2Card[j]){
+			else if(AI2Card[i]==AI2Card[j]||rank[AI2Card[j]]==-1){
 			passtime=0;
 		    AI2_push[0]=AI2Card[i];
 			AI2_push[1]=AI2Card[j];
